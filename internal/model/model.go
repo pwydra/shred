@@ -13,11 +13,11 @@ type AuditRecord struct {
 }
 
 type ExerciseFields struct {
-	Name           string   `json:"name" validate:"required"`
-	Description    string   `json:"description"`
-	Cues           string	`json:"cues"`
-	PrimaryMuscles string   `json:"primaryMuscles" validate:"required"`
-	Apparatus      string   `json:"apparatus"`
+	Name           string `json:"name" validate:"required"`
+	Description    string `json:"description"`
+	Cues           string `json:"cues"`
+	PrimaryMuscles string `json:"primaryMuscles" validate:"required"`
+	Apparatus      string `json:"apparatus"`
 }
 
 type ExerciseRequest struct {

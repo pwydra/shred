@@ -2,7 +2,10 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"os"
+	"strconv"
 
 	_ "github.com/lib/pq"
 
@@ -23,8 +26,21 @@ func NewRouter() *Router {
 
 func main() {
 	log.Println("Starting Shred API")
-	var err error
-	connStr := "user=postgres dbname=shred_db password=postgres sslmode=disable"
+	dbHost := os.Getenv("POSTGRES_HOST")
+	dbPort := os.Getenv("POSTGRES_PORT")
+	dbUser := os.Getenv("POSTGRES_USER")
+	dbPassword := os.Getenv("POSTGRES_PASSWORD")
+	dbName := os.Getenv("POSTGRES_DB")
+	if dbHost == "" || dbPort == "" || dbUser == "" || dbPassword == "" || dbName == "" {
+		log.Fatal("Database environment variables are not set")
+	}
+
+	port, err := strconv.Atoi(dbPort)
+	if err != nil {
+		log.Fatalf("Invalid PORT: %v", err)
+	}
+
+	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", dbHost, port, dbUser, dbPassword, dbName)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		panic(err)

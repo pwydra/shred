@@ -18,31 +18,29 @@ func NewExerciseDao(db *sql.DB) *ExerciseDao {
 }
 
 /*
-	insert into exercise (
-	   exercise_name, description, instructions,
-	   category, cues, primary_muscles,
-	   secondary_muscles, front_image, back_image,
-	   video_url, apparatus, license, user_uuid
+TODO: update columns to include all fields
 
-) values ('Squat', 'Lower Body', 'Stand with feet shoulder-width apart, toes slightly turned out. Push hips back and bend knees to lower into a squat. Keep chest up and back flat. Push through heels to stand back up.',
-
-	'Strength', 'Keep chest up and back flat; imagine pushing through floor; knees travel over toes; slow eccentric', 'Quadriceps',
-	'Glutes', null, null,
-	null, 'Barbell', 'None',
-	'f47f3b9e-0b1d-4b7b-8b3d-3b1b1b1b1b1b');
+	exercise_name, description, instructions,
+	category, cues, primary_muscles,
+	secondary_muscles, front_image, back_image,
+	video_url, apparatus, license, user_uuid
 */
 const createDML string = `
 	INSERT INTO exercise (
 		exercise_name, description, cues, primary_muscles, apparatus, user_uuid
 	) VALUES ($1, $2, $3, $4, $5, $6) RETURNING uuid`
+
 const updateDML string = "UPDATE exercise SET exercise_name = $1, description = $2, cues = $3, primary_muscles = $4, apparatus = $5 WHERE uuid = $6"
+
 const deleteDML string = "DELETE FROM exercise WHERE uuid = $1"
+
 const request1DQL string = `
 	SELECT uuid, exercise_name, description, cues, primary_muscles, apparatus, created_at, user_uuid 
 	FROM   exercise 
 	WHERE  uuid = $1`
 
-//var requestAllDQL string = "SELECT uuid, exercise_name, description cues, primary_muscles, apparatus, created_at, user_uuid FROM exercises"
+// TODO: add query for all exercises
+// var requestAllDQL string = "SELECT uuid, exercise_name, description cues, primary_muscles, apparatus, created_at, user_uuid FROM exercises"
 
 func (dao *ExerciseDao) Create(exerciseRequest *model.ExerciseRequest) (*model.Exercise, error) {
 	exercise := model.Exercise{
