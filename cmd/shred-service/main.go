@@ -24,8 +24,7 @@ func NewRouter() *Router {
 	}
 }
 
-func main() {
-	log.Println("Starting Shred API")
+func getConnectionString() string {
 	dbHost := os.Getenv("POSTGRES_HOST")
 	dbPort := os.Getenv("POSTGRES_PORT")
 	dbUser := os.Getenv("POSTGRES_USER")
@@ -40,8 +39,13 @@ func main() {
 		log.Fatalf("Invalid PORT: %v", err)
 	}
 
-	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", dbHost, port, dbUser, dbPassword, dbName)
-	db, err := sql.Open("postgres", connStr)
+	return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", dbHost, port, dbUser, dbPassword, dbName)
+}
+
+func main() {
+	log.Println("Starting Shred API")
+
+	db, err := sql.Open("postgres", getConnectionString())
 	if err != nil {
 		panic(err)
 	}

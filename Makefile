@@ -47,8 +47,8 @@ logs:
 	docker compose -f $(DOCKER_COMPOSE_FILE) logs -f
 
 # Helper target to stop Docker Compose
-down:
+stop:
 	docker compose -f $(DOCKER_COMPOSE_FILE) stop
 
 # Helper target to restart Docker Compose
-restart: down up
+restart: stop up

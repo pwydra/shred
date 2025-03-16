@@ -11,10 +11,10 @@ import (
 )
 
 type Handler struct {
-	dao *dao.ExerciseDao
+	dao dao.ExerciseDaoInterface
 }
 
-func NewHandler(dao *dao.ExerciseDao) *Handler {
+func NewHandler(dao dao.ExerciseDaoInterface) *Handler {
 	return &Handler{dao: dao}
 }
 

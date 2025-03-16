@@ -13,6 +13,16 @@ type ExerciseDao struct {
 	db *sql.DB
 }
 
+type ExerciseDaoInterface interface {
+	Create(exerciseRequest *model.ExerciseRequest) (*model.Exercise, error)
+	Read(uuid uuid.UUID) (*model.Exercise, error)
+	Update(exercise *model.Exercise) error
+	Delete(uuid uuid.UUID) error
+}
+
+// Ensure ExerciseDao implements ExerciseDaoInterface
+var _ ExerciseDaoInterface = (*ExerciseDao)(nil)
+
 func NewExerciseDao(db *sql.DB) *ExerciseDao {
 	return &ExerciseDao{db: db}
 }
