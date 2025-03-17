@@ -1,12 +1,12 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
 	"strconv"
 
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 
 	"github.com/gin-gonic/gin"
@@ -45,16 +45,8 @@ func getConnectionString() string {
 func main() {
 	log.Println("Starting Shred API")
 
-	db, err := sql.Open("postgres", getConnectionString())
-	if err != nil {
-		panic(err)
-	}
+	db := sqlx.MustConnect("postgres", getConnectionString())
 	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	exerciseDao := dao.NewExerciseDao(db)
 	handler := handlers.NewHandler(exerciseDao)
