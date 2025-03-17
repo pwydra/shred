@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    container_name: postgres_shred
+    user: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data 
+    ports:
+      - "5432:5432"
+    networks:
+      - shred-network
+ 
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - shred-network
+ 
+  shred:
+    build: .
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: shred_db
+    image: shred-app
+    restart: always
+    container_name: shred-service
+    ports:
+      - 8088:8088
+    networks:
+      - shred-network
+
+networks:
+  shred-network:
+    driver: bridge
+
+volumes:
+  pgdata:
