@@ -10,16 +10,12 @@ services:
       - pgdata:/var/lib/postgresql/data 
     ports:
       - "5432:5432"
-    networks:
-      - shred-network
  
   adminer:
     image: adminer
     restart: always
     ports:
       - 8080:8080
-    networks:
-      - shred-network
  
   shred:
     build: .
@@ -34,12 +30,6 @@ services:
     container_name: shred-service
     ports:
       - 8088:8088
-    networks:
-      - shred-network
-
-networks:
-  shred-network:
-    driver: bridge
 
 volumes:
   pgdata:

@@ -42,6 +42,11 @@ clean:
 	rm -f $(BIN_DIR)/$(APP_NAME)
 	@echo "Clean complete."
 
+# Helper target to execute psql command in the running PostgreSQL container
+# This assumes the PostgreSQL container is named 'postgres_shred'
+psql:
+	docker exec -it postgres_shred psql
+
 # Helper target to view Docker Compose logs
 logs:
 	docker compose -f $(DOCKER_COMPOSE_FILE) logs -f

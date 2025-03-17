@@ -34,9 +34,9 @@ Shred is a simple application designed to help users track their exercise routin
 
 2.  **Compile the Code:**
 
-        ```bash
-        make build
-        ```
+    ```bash
+    make build
+    ```
 
 3.  **Resolve Dependencies:**
 
@@ -58,10 +58,10 @@ Shred is a simple application designed to help users track their exercise routin
 
 1.  **Run Unit Tests:**
 
-        ```bash
-        make test
-        make coverage // you can evaluate the coverage report in a browser after this is done.
-        ```
+    ```bash
+    make test
+    make coverage // you can evaluate the coverage report in a browser after this is done.
+    ```
 
 ### Integration Tests
 
