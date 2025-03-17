@@ -1,16 +1,16 @@
 package dao
 
 import (
-	"database/sql"
-	"fmt"
 	"log"
+
+	"github.com/jmoiron/sqlx"
 
 	"github.com/google/uuid"
 	"github.com/pwydra/shred/internal/model"
 )
 
 type ExerciseDao struct {
-	db *sql.DB
+	db *sqlx.DB
 }
 
 type ExerciseDaoInterface interface {
@@ -23,43 +23,48 @@ type ExerciseDaoInterface interface {
 // Ensure ExerciseDao implements ExerciseDaoInterface
 var _ ExerciseDaoInterface = (*ExerciseDao)(nil)
 
-func NewExerciseDao(db *sql.DB) *ExerciseDao {
+func NewExerciseDao(db *sqlx.DB) *ExerciseDao {
 	return &ExerciseDao{db: db}
 }
 
-/*
-TODO: update columns to include all fields
-
-	exercise_name, description, instructions,
-	category, cues, primary_muscles,
-	secondary_muscles, front_image, back_image,
-	video_url, apparatus, license, user_uuid
-*/
 const createDML string = `
 	INSERT INTO exercise (
-		exercise_name, description, cues, primary_muscles, apparatus, user_uuid
-	) VALUES ($1, $2, $3, $4, $5, $6) RETURNING uuid`
+		exercise_name, exercise_description, instructions, cues, 
+		video_url, category_code, license_short_name, license_author, 
+		created_by
+	) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING uuid`
 
-const updateDML string = "UPDATE exercise SET exercise_name = $1, description = $2, cues = $3, primary_muscles = $4, apparatus = $5 WHERE uuid = $6"
+const updateDML string = `
+	UPDATE exercise SET 
+		exercise_name = $1, 
+		exercise_description = $2,
+		instructions = $3, 
+		cues = $4,
+		video_url = $5,
+		category_code = $6,
+		license_short_name = $7,
+		license_author = $8
+	WHERE exercise_uuid = $9`
 
-const deleteDML string = "DELETE FROM exercise WHERE uuid = $1"
+const deleteDML string = "DELETE FROM exercise WHERE exercise_uuid = $1"
 
 const request1DQL string = `
-	SELECT uuid, exercise_name, description, cues, primary_muscles, apparatus, created_at, user_uuid 
+	SELECT * 
 	FROM   exercise 
-	WHERE  uuid = $1`
+	WHERE  exercise_uuid = $1`
 
 // TODO: add query for all exercises
 // var requestAllDQL string = "SELECT uuid, exercise_name, description cues, primary_muscles, apparatus, created_at, user_uuid FROM exercises"
 
-func (dao *ExerciseDao) Create(exerciseRequest *model.ExerciseRequest) (*model.Exercise, error) {
+func (dao *ExerciseDao) Create(exReq *model.ExerciseRequest) (*model.Exercise, error) {
 	exercise := model.Exercise{
-		ExerciseFields: exerciseRequest.ExerciseFields,
+		ExerciseFields: exReq.ExerciseFields,
 	}
 
-	err := dao.db.QueryRow(createDML,
-		exerciseRequest.Name, exerciseRequest.Description, exerciseRequest.Cues, exerciseRequest.PrimaryMuscles,
-		exerciseRequest.Apparatus, exerciseRequest.UserUuid).Scan(&exercise.Uuid)
+	err := dao.db.QueryRowx(createDML,
+		exReq.ExerciseName, exReq.Description, exReq.Instructions, exReq.Cues,
+		exReq.VideoUrl, exReq.CategoryCode, exReq.LicenseShortName, exReq.LicenseAuthor,
+		exReq.CreatedBy).Scan(&exercise.CreatedBy)
 	if err != nil {
 		log.Println("Error creating exercise:", err)
 		return nil, err
@@ -67,23 +72,21 @@ func (dao *ExerciseDao) Create(exerciseRequest *model.ExerciseRequest) (*model.E
 	return &exercise, nil
 }
 
-func (dao *ExerciseDao) Read(uuid uuid.UUID) (*model.Exercise, error) {
-	fmt.Println("Reading exercise with uuid:", uuid)
-	row := dao.db.QueryRow(request1DQL, uuid)
-	exercise := &model.Exercise{}
-	fmt.Println("scanning exercise from row", row)
-	err := row.Scan(
-		&exercise.Uuid, &exercise.Name, &exercise.Description, &exercise.Cues,
-		&exercise.PrimaryMuscles, &exercise.Apparatus, &exercise.CreateDt, &exercise.UserUuid)
+func (dao *ExerciseDao) Read(exUuid uuid.UUID) (*model.Exercise, error) {
+	var ex model.Exercise
+	err := dao.db.QueryRowx(request1DQL, exUuid).StructScan(&ex)
 	if err != nil {
 		log.Println("Error reading exercise:", err)
 		return nil, err
 	}
-	return exercise, nil
+	return &ex, nil
 }
 
 func (dao *ExerciseDao) Update(exercise *model.Exercise) error {
-	_, err := dao.db.Exec(updateDML, exercise.Name, exercise.Description, exercise.Cues, exercise.PrimaryMuscles, exercise.Apparatus, exercise.Uuid)
+	_, err := dao.db.Exec(updateDML,
+		exercise.ExerciseName, exercise.Description, exercise.Instructions, exercise.Cues,
+		exercise.VideoUrl, exercise.CategoryCode, exercise.LicenseShortName,
+		exercise.LicenseAuthor, exercise.ExerciseUuid)
 	if err != nil {
 		log.Println("Error updating exercise:", err)
 		return err

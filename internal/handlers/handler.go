@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -63,7 +62,6 @@ func (h Handler) DeleteExercise(ctx *gin.Context) {
 
 func (h Handler) GetExercise(ctx *gin.Context) {
 	uuid, err := uuid.Parse(ctx.Param("uuid"))
-	fmt.Printf("unparsed: %s, parsed: %x\n", ctx.Param("uuid"), uuid)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

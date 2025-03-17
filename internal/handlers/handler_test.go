@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -49,17 +50,20 @@ func TestCreateExercise(t *testing.T) {
 
 	exReq := model.ExerciseRequest{
 		ExerciseFields: model.ExerciseFields{
-			Name:           "Squat",
-			Description:    "Lower Body",
-			Cues:           "Keep chest up and back flat",
-			PrimaryMuscles: "Quadriceps",
-			Apparatus:      "Barbell",
+			ExerciseName:     "Squat",
+			Description:      "Lower Body",
+			Instructions:     "Stand with feet shoulder-width apart",
+			Cues:             "Keep chest up and back flat",
+			VideoUrl:         "http://example.com/squat.mp4",
+			CategoryCode:     "strength",
+			LicenseShortName: "CC-BY",
+			LicenseAuthor:    "John Doe",
 		},
-		UserUuid: uuid.New(),
+		CreatedBy: uuid.New(),
 	}
 
 	ex := model.Exercise{
-		Uuid:           uuid.New(),
+		ExerciseUuid:   uuid.New(),
 		ExerciseFields: exReq.ExerciseFields,
 	}
 
@@ -76,7 +80,7 @@ func TestCreateExercise(t *testing.T) {
 	var response model.Exercise
 	err := json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
-	assert.Equal(t, ex.Uuid, response.Uuid)
+	assert.Equal(t, ex.CreatedBy, response.CreatedBy)
 }
 
 func TestGetExercise(t *testing.T) {
@@ -89,8 +93,22 @@ func TestGetExercise(t *testing.T) {
 
 	exUuid := uuid.New()
 	ex := model.Exercise{
-		Uuid:           exUuid,
-		ExerciseFields: model.ExerciseFields{Name: "Squat", Description: "Lower Body", Cues: "Keep chest up and back flat", PrimaryMuscles: "Quadriceps", Apparatus: "Barbell"},
+		ExerciseUuid: exUuid,
+		ExerciseFields: model.ExerciseFields{
+			ExerciseName:     "Squat",
+			Description:      "Lower Body",
+			Instructions:     "Stand with feet shoulder-width apart",
+			Cues:             "Keep chest up and back flat",
+			VideoUrl:         "http://example.com/squat.mp4",
+			CategoryCode:     "strength",
+			LicenseShortName: "CC-BY",
+			LicenseAuthor:    "John Doe",
+		},
+		AuditRecord: model.AuditRecord{
+			CreatedBy: uuid.New(),
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
 	}
 
 	mockDao.On("Read", exUuid).Return(&ex, nil)
@@ -104,7 +122,7 @@ func TestGetExercise(t *testing.T) {
 	var response model.Exercise
 	err := json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
-	assert.Equal(t, ex.Uuid, response.Uuid)
+	assert.Equal(t, ex.ExerciseUuid, response.ExerciseUuid)
 }
 
 func TestUpdateExercise(t *testing.T) {
@@ -116,8 +134,16 @@ func TestUpdateExercise(t *testing.T) {
 	router.PUT("/exercises", handler.UpdateExercise)
 
 	ex := model.Exercise{
-		Uuid:           uuid.New(),
-		ExerciseFields: model.ExerciseFields{Name: "Squat", Description: "Lower Body", Cues: "Keep chest up and back flat", PrimaryMuscles: "Quadriceps", Apparatus: "Barbell"},
+		ExerciseUuid: uuid.New(),
+		ExerciseFields: model.ExerciseFields{
+			Description:      "Lower Body",
+			Instructions:     "Stand with feet shoulder-width apart",
+			Cues:             "Keep chest up and back flat",
+			VideoUrl:         "http://example.com/squat.mp4",
+			CategoryCode:     "strength",
+			LicenseShortName: "CC-BY",
+			LicenseAuthor:    "John Doe",
+		},
 	}
 
 	mockDao.On("Update", &ex).Return(nil)
@@ -133,7 +159,7 @@ func TestUpdateExercise(t *testing.T) {
 	var response model.Exercise
 	err := json.Unmarshal(w.Body.Bytes(), &response)
 	assert.NoError(t, err)
-	assert.Equal(t, ex.Uuid, response.Uuid)
+	assert.Equal(t, ex.ExerciseUuid, response.ExerciseUuid)
 }
 
 func TestDeleteExercise(t *testing.T) {
