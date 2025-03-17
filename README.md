@@ -38,19 +38,43 @@ Shred is a simple application designed to help users track their exercise routin
     make build
     ```
 
-3.  **Resolve Dependencies:**
+3.  **Build the image:**
+
+    ```bash
+    make image
+    ```
 
 ## Running the Application
 
 1.  **Execute the Application:**
 
+    bring up the docker containers
+
     ``` bash
     make up
+    ```
+
+    create the schema
+
+    ``` bash
+    cat db/schema.sql | docker exec -i postgres_shred psql -d shred_db
+    ```
+    
+    load sample data
+
+    ``` bash
+    cat db/sample.sql | docker exec -i postgres_shred psql -d shred_db
     ```
 
 2.  **Access the Application:**
 
     *   _TODO_ currently only the API is available through docker
+
+    curl the GET exercise endpoint
+
+    ```bash
+    curl http://localhost:8088/exercises/315aaee2-1760-4cd5-9b44-07e4eb2132bd
+    ```
 
 ## Testing the Application
 
