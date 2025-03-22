@@ -4,8 +4,12 @@ APP_NAME := shred-service
 DOCKER_IMAGE_NAME := shred-app
 DOCKER_COMPOSE_FILE := docker-compose.yml
 BIN_DIR := bin
+GOBIN ?= $$(go env GOPATH)/bin
 
 .PHONY: all build docker-build test coverage run clean
+.PHONY: install-go-test-coverage
+install-go-test-coverage:
+	go install github.com/vladopajic/go-test-coverage/v2@latest
 
 all: build image
 
@@ -24,11 +28,9 @@ test:
 	go test -v ./...
 	@echo "Unit tests finished."
 
-coverage:
-	@echo "Running tests with coverage..."
-	go test -coverprofile=coverage.out ./...
-	go tool cover -html=coverage.out
-	@echo "Coverage report generated: coverage.out.html"
+coverage: install-go-test-coverage
+	go test ./... -coverprofile=./cover.out -covermode=atomic -coverpkg=./...
+	${GOBIN}/go-test-coverage --config=./.testcoverage.yml
 
 up:
 	@echo "Starting application with Docker Compose..."
