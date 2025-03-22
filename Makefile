@@ -6,8 +6,8 @@ DOCKER_COMPOSE_FILE := docker-compose.yml
 BIN_DIR := bin
 GOBIN ?= $$(go env GOPATH)/bin
 
-.PHONY: all build docker-build test coverage run clean
-.PHONY: install-go-test-coverage
+.PHONY: all build docker-build test coverage up clean psql logs stop restart install-go-test-coverage
+
 install-go-test-coverage:
 	go install github.com/vladopajic/go-test-coverage/v2@latest
 
