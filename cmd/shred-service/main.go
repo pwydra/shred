@@ -19,10 +19,26 @@ type Router struct {
 }
 
 func NewRouter() *Router {
-	return &Router{
+	r := Router{
 		Engine: gin.Default(),
 	}
+
+	return &r
 }
+
+func main() {
+	log.Println("Starting Shred API")
+
+	db := sqlx.MustConnect("postgres", getConnectionString())
+	defer db.Close()
+
+	r := setupRouter(db)
+
+	if err := r.Engine.Run(":8088"); err != nil {
+		panic(err)
+	}
+}
+
 
 func getConnectionString() string {
 	dbHost := os.Getenv("POSTGRES_HOST")
@@ -42,12 +58,7 @@ func getConnectionString() string {
 	return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", dbHost, port, dbUser, dbPassword, dbName)
 }
 
-func main() {
-	log.Println("Starting Shred API")
-
-	db := sqlx.MustConnect("postgres", getConnectionString())
-	defer db.Close()
-
+func setupRouter(db *sqlx.DB) *Router {
 	exerciseDao := dao.NewExerciseDao(db)
 	handler := handlers.NewHandler(exerciseDao)
 
@@ -60,7 +71,5 @@ func main() {
 	r.Engine.PUT("/exercises/:uuid", handler.UpdateExercise)
 	r.Engine.DELETE("/exercises/:uuid", handler.DeleteExercise)
 
-	if err := r.Engine.Run(":8088"); err != nil {
-		panic(err)
-	}
+	return r
 }

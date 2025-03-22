@@ -38,8 +38,17 @@ func (h Handler) UpdateExercise(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	uuid, err := uuid.Parse(ctx.Param("uuid"))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if exReq.ExerciseUuid != uuid {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "UUID in path does not match UUID in request body"})
+		return
+	}
 
-	err := h.dao.Update(&exReq)
+	err = h.dao.Update(&exReq)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
