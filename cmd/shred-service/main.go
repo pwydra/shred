@@ -31,12 +31,12 @@ func getConnectionString() string {
 	dbPassword := os.Getenv("POSTGRES_PASSWORD")
 	dbName := os.Getenv("POSTGRES_DB")
 	if dbHost == "" || dbPort == "" || dbUser == "" || dbPassword == "" || dbName == "" {
-		log.Fatal("Database environment variables are not set")
+		log.Panic("Database environment variables are not set")
 	}
 
 	port, err := strconv.Atoi(dbPort)
 	if err != nil {
-		log.Fatalf("Invalid PORT: %v", err)
+		log.Panicf("Invalid PORT: %v", err)
 	}
 
 	return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", dbHost, port, dbUser, dbPassword, dbName)

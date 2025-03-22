@@ -181,3 +181,23 @@ func TestDeleteExercise(t *testing.T) {
 
 	assert.Equal(t, http.StatusNoContent, w.Code)
 }
+
+func TestDeleteExercise_Error(t *testing.T) {
+	mockDao := new(MockExerciseDao)
+	handler := NewHandler(mockDao)
+
+	gin.SetMode(gin.TestMode)
+	router := gin.Default()
+	router.DELETE("/exercises/:uuid", handler.DeleteExercise)
+
+	exUuid := uuid.New()
+
+	mockDao.On("Delete", exUuid).Return(assert.AnError)
+
+	req, _ := http.NewRequest(http.MethodDelete, "/exercises/"+exUuid.String(), nil)
+	w := httptest.NewRecorder()
+
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusInternalServerError, w.Code)
+}
