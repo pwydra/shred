@@ -87,9 +87,11 @@ CREATE TABLE IF NOT EXISTS exercise_apparatus (
   FOREIGN KEY (apparatus_code) REFERENCES apparatus_type(apparatus_code)
 );
 
+CREATE TYPE muscle_role AS ENUM ('primary', 'secondary', 'stabilizer');
 CREATE TABLE IF NOT EXISTS exercise_muscle (
   exercise_uuid UUID NOT NULL,
   muscle_code VARCHAR(45) NOT NULL,
+  muscle_role muscle_role NOT NULL,
   PRIMARY KEY (exercise_uuid, muscle_code),
   FOREIGN KEY (exercise_uuid) REFERENCES exercise(exercise_uuid),
   FOREIGN KEY (muscle_code) REFERENCES muscle_type(muscle_code)
