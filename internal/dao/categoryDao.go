@@ -33,6 +33,7 @@ const getCatByCodeDQL string = `
 	SELECT *
 	FROM category_type
 	WHERE category_code = $1`
+
 func (dao *CategoryDAO) GetCategoryByCode(catCode string) (*model.Category, error) {
 	var category model.Category
 	if err := dao.db.QueryRowx(getCatByCodeDQL, strings.ToUpper(catCode)).StructScan(&category); err != nil {
@@ -49,6 +50,7 @@ func (dao *CategoryDAO) GetCategoryByCode(catCode string) (*model.Category, erro
 const getAllCatsDQL string = `
 	SELECT *
 	FROM category_type`
+
 func (dao *CategoryDAO) GetAllCategories(ctx context.Context) ([]model.Category, error) {
 	var categories []model.Category
 	if err := dao.db.SelectContext(ctx, &categories, getAllCatsDQL); err != nil {
@@ -61,7 +63,7 @@ func (dao *CategoryDAO) GetAllCategories(ctx context.Context) ([]model.Category,
 // CreateCategory inserts a new category into the database.
 // Returns an error if the insertion fails.
 // Does not return the PK as type tables have PK specified by the request.
-func (dao *CategoryDAO) CreateCategory(catReq *model.CategoryRequest) (error) {
+func (dao *CategoryDAO) CreateCategory(catReq *model.CategoryRequest) error {
 	_, err := dao.db.Exec(createCatDML,
 		strings.ToUpper(catReq.CategoryCode), catReq.CategoryName, catReq.CategoryDesc)
 	if err != nil {
@@ -78,8 +80,9 @@ const updateCatDML string = `
 		category_name = $1,
 		category_description = $2
 	WHERE category_code = $3`
+
 func (dao *CategoryDAO) UpdateCategory(catReq *model.CategoryRequest) error {
-	result, err := dao.db.Exec(updateCatDML, 
+	result, err := dao.db.Exec(updateCatDML,
 		catReq.CategoryName, catReq.CategoryDesc, strings.ToUpper(catReq.CategoryCode))
 	if err != nil {
 		return err

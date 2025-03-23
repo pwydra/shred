@@ -31,7 +31,6 @@ type Apparatus struct {
 	AuditRecord
 }
 
-
 type MuscleFields struct {
 	MuscleCode  string `json:"muscleCode" db:"muscle_code"`
 	MuscleName  string `json:"muscleName" db:"muscle_name"`

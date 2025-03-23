@@ -33,6 +33,7 @@ const getMusByCodeDQL string = `
 	SELECT *
 	FROM muscle_type
 	WHERE muscle_code = $1`
+
 func (dao *MuscleDAO) GetMuscleByCode(musCode string) (*model.Muscle, error) {
 	var muscle model.Muscle
 	if err := dao.db.QueryRowx(getMusByCodeDQL, strings.ToUpper(musCode)).StructScan(&muscle); err != nil {
@@ -49,6 +50,7 @@ func (dao *MuscleDAO) GetMuscleByCode(musCode string) (*model.Muscle, error) {
 const getAllMusDQL string = `
 	SELECT *
 	FROM muscle_type`
+
 func (dao *MuscleDAO) GetAllMuscles(ctx context.Context) ([]model.Muscle, error) {
 	var muscles []model.Muscle
 	if err := dao.db.SelectContext(ctx, &muscles, getAllMusDQL); err != nil {
@@ -61,7 +63,7 @@ func (dao *MuscleDAO) GetAllMuscles(ctx context.Context) ([]model.Muscle, error)
 // CreateMuscle inserts a new muscle into the database.
 // Returns an error if the insertion fails.
 // Does not return the PK as type tables have PK specified by the request.
-func (dao *MuscleDAO) CreateMuscle(musReq *model.MuscleRequest) (error) {
+func (dao *MuscleDAO) CreateMuscle(musReq *model.MuscleRequest) error {
 	_, err := dao.db.Exec(createMusDML,
 		strings.ToUpper(musReq.MuscleCode), musReq.MuscleName, musReq.MuscleDesc)
 	if err != nil {
@@ -79,8 +81,9 @@ const updateMusDML string = `
 		muscle_description = $2,
 		muscle_group = $3
 	WHERE muscle_code = $4`
+
 func (dao *MuscleDAO) UpdateMuscle(musReq *model.MuscleRequest) error {
-	result, err := dao.db.Exec(updateMusDML, 
+	result, err := dao.db.Exec(updateMusDML,
 		musReq.MuscleName, musReq.MuscleDesc, musReq.MuscleGroup, strings.ToUpper(musReq.MuscleCode))
 	if err != nil {
 		return err

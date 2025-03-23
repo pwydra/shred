@@ -78,9 +78,9 @@ func TestCreateApparatus(t *testing.T) {
 
 	appReq := &model.ApparatusRequest{
 		ApparatusFields: model.ApparatusFields{
-		ApparatusCode: "BENCH",
-		ApparatusName: "Bench",
-		ApparatusDesc: "Bench you can lie on and that is optionally adjustable",
+			ApparatusCode: "BENCH",
+			ApparatusName: "Bench",
+			ApparatusDesc: "Bench you can lie on and that is optionally adjustable",
 		},
 	}
 
@@ -104,8 +104,8 @@ func TestCreateApparatus_Error(t *testing.T) {
 			ApparatusCode: "BENCH",
 			ApparatusName: "Bench",
 			ApparatusDesc: "Bench you can lie on and that is optionally adjustable",
-			},
-		}
+		},
+	}
 
 	mock.ExpectExec("INSERT INTO apparatus_type \\( apparatus_code, apparatus_name, apparatus_description \\) VALUES \\( \\$1, \\$2, \\$3 \\)").
 		WithArgs(appReq.ApparatusCode, appReq.ApparatusName, appReq.ApparatusDesc).
@@ -155,7 +155,7 @@ func TestUpdateApparatus_Error(t *testing.T) {
 	}
 
 	mock.ExpectExec("UPDATE").
-	WithArgs(appReq.ApparatusName, appReq.ApparatusDesc, appReq.ApparatusCode).
+		WithArgs(appReq.ApparatusName, appReq.ApparatusDesc, appReq.ApparatusCode).
 		WillReturnError(sqlmock.ErrCancelled)
 
 	err = dao.UpdateApparatus(appReq)
@@ -219,7 +219,6 @@ func TestDeleteApparatus_Error(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, "canceling query due to user request", err.Error())
 }
-
 
 func TestDeleteApparatus_NotFound(t *testing.T) {
 	db, mock, err := sqlmock.New()

@@ -78,9 +78,9 @@ func TestCreateMuscle(t *testing.T) {
 
 	catReq := &model.MuscleRequest{
 		MuscleFields: model.MuscleFields{
-		MuscleCode: "LAT",
-		MuscleName: "Latissimus",
-		MuscleDesc: "Muscle of the back",
+			MuscleCode: "LAT",
+			MuscleName: "Latissimus",
+			MuscleDesc: "Muscle of the back",
 		},
 	}
 
@@ -104,8 +104,8 @@ func TestCreateMuscle_Error(t *testing.T) {
 			MuscleCode: "LAT",
 			MuscleName: "Latissimus",
 			MuscleDesc: "Muscle of the back",
-			},
-		}
+		},
+	}
 
 	mock.ExpectExec("INSERT INTO muscle_type \\( muscle_code, muscle_name, muscle_description, muscle_group \\) VALUES \\( \\$1, \\$2, \\$3, \\$4 \\)").
 		WithArgs(catReq.MuscleCode, catReq.MuscleName, catReq.MuscleDesc).
@@ -125,9 +125,9 @@ func TestUpdateMuscle(t *testing.T) {
 
 	catReq := &model.MuscleRequest{
 		MuscleFields: model.MuscleFields{
-			MuscleCode: "LAT",
-			MuscleName: "Latissimus",
-			MuscleDesc: "Muscle of the back",
+			MuscleCode:  "LAT",
+			MuscleName:  "Latissimus",
+			MuscleDesc:  "Muscle of the back",
 			MuscleGroup: "Back",
 		},
 	}
@@ -149,15 +149,15 @@ func TestUpdateMuscle_Error(t *testing.T) {
 
 	catReq := &model.MuscleRequest{
 		MuscleFields: model.MuscleFields{
-			MuscleCode: "LAT",
-			MuscleName: "Latissimus",
-			MuscleDesc: "Muscle of the back",
+			MuscleCode:  "LAT",
+			MuscleName:  "Latissimus",
+			MuscleDesc:  "Muscle of the back",
 			MuscleGroup: "Back",
 		},
 	}
 
 	mock.ExpectExec("UPDATE").
-	WithArgs(catReq.MuscleName, catReq.MuscleDesc, catReq.MuscleGroup, catReq.MuscleCode).
+		WithArgs(catReq.MuscleName, catReq.MuscleDesc, catReq.MuscleGroup, catReq.MuscleCode).
 		WillReturnError(sqlmock.ErrCancelled)
 
 	err = dao.UpdateMuscle(catReq)
@@ -174,9 +174,9 @@ func TestUpdateMuscle_NotFound(t *testing.T) {
 
 	catReq := &model.MuscleRequest{
 		MuscleFields: model.MuscleFields{
-			MuscleCode: "INVALID",
-			MuscleName: "Invalid",
-			MuscleDesc: "Invalid description",
+			MuscleCode:  "INVALID",
+			MuscleName:  "Invalid",
+			MuscleDesc:  "Invalid description",
 			MuscleGroup: "Invalid group",
 		},
 	}
@@ -222,7 +222,6 @@ func TestDeleteMuscle_Error(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, "canceling query due to user request", err.Error())
 }
-
 
 func TestDeleteMuscle_NotFound(t *testing.T) {
 	db, mock, err := sqlmock.New()

@@ -33,6 +33,7 @@ const getAppByCodeDQL string = `
 	SELECT *
 	FROM apparatus_type
 	WHERE apparatus_code = $1`
+
 func (dao *ApparatusDAO) GetApparatusByCode(appCode string) (*model.Apparatus, error) {
 	var apparatus model.Apparatus
 	if err := dao.db.QueryRowx(getAppByCodeDQL, strings.ToUpper(appCode)).StructScan(&apparatus); err != nil {
@@ -49,6 +50,7 @@ func (dao *ApparatusDAO) GetApparatusByCode(appCode string) (*model.Apparatus, e
 const getAllAppsDQL string = `
 	SELECT *
 	FROM apparatus_type`
+
 func (dao *ApparatusDAO) GetAllApparatuses(ctx context.Context) ([]model.Apparatus, error) {
 	var apparatuses []model.Apparatus
 	if err := dao.db.SelectContext(ctx, &apparatuses, getAllAppsDQL); err != nil {
@@ -61,7 +63,7 @@ func (dao *ApparatusDAO) GetAllApparatuses(ctx context.Context) ([]model.Apparat
 // CreateApparatus inserts a new apparatus into the database.
 // Returns an error if the insertion fails.
 // Does not return the PK as type tables have PK specified by the request.
-func (dao *ApparatusDAO) CreateApparatus(appReq *model.ApparatusRequest) (error) {
+func (dao *ApparatusDAO) CreateApparatus(appReq *model.ApparatusRequest) error {
 	_, err := dao.db.Exec(createAppDML,
 		strings.ToUpper(appReq.ApparatusCode), appReq.ApparatusName, appReq.ApparatusDesc)
 	if err != nil {
@@ -78,8 +80,9 @@ const updateAppDML string = `
 		apparatus_name = $1,
 		apparatus_description = $2
 	WHERE apparatus_code = $3`
+
 func (dao *ApparatusDAO) UpdateApparatus(appReq *model.ApparatusRequest) error {
-	result, err := dao.db.Exec(updateAppDML, 
+	result, err := dao.db.Exec(updateAppDML,
 		appReq.ApparatusName, appReq.ApparatusDesc, strings.ToUpper(appReq.ApparatusCode))
 	if err != nil {
 		return err

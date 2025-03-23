@@ -55,7 +55,6 @@ func newUpdateExerciseRequest() model.Exercise {
 	}
 }
 
-
 func TestCreateExercise(t *testing.T) {
 	mockDao := new(MockExerciseDao)
 	handler := NewHandler(mockDao)

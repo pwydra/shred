@@ -39,7 +39,6 @@ func main() {
 	}
 }
 
-
 func getConnectionString() string {
 	dbHost := os.Getenv("POSTGRES_HOST")
 	dbPort := os.Getenv("POSTGRES_PORT")
