@@ -32,9 +32,9 @@ type Muscle struct {
 }
 
 type CategoryFields struct {
-	CategoryCode string `json:"categoryCode"`
-	CategoryName string `json:"categoryName"`
-	CategoryDesc string `json:"categoryDesc"`
+	CategoryCode string `json:"categoryCode" db:"category_code"`
+	CategoryName string `json:"categoryName" db:"category_name"`
+	CategoryDesc string `json:"categoryDesc" db:"category_description"`
 }
 
 type CategoryRequest struct {
