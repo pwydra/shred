@@ -78,9 +78,9 @@ func TestCreateCategory(t *testing.T) {
 
 	catReq := &model.CategoryRequest{
 		CategoryFields: model.CategoryFields{
-		CategoryCode: "STRENGTH",
-		CategoryName: "Strength",
-		CategoryDesc: "Strength training exercises",
+			CategoryCode: "STRENGTH",
+			CategoryName: "Strength",
+			CategoryDesc: "Strength training exercises",
 		},
 	}
 
@@ -104,8 +104,8 @@ func TestCreateCategory_Error(t *testing.T) {
 			CategoryCode: "STRENGTH",
 			CategoryName: "Strength",
 			CategoryDesc: "Strength training exercises",
-			},
-		}
+		},
+	}
 
 	mock.ExpectExec("INSERT INTO category_type \\( category_code, category_name, category_description \\) VALUES \\( \\$1, \\$2, \\$3 \\)").
 		WithArgs(catReq.CategoryCode, catReq.CategoryName, catReq.CategoryDesc).
@@ -155,7 +155,7 @@ func TestUpdateCategory_Error(t *testing.T) {
 	}
 
 	mock.ExpectExec("UPDATE").
-	WithArgs(catReq.CategoryName, catReq.CategoryDesc, catReq.CategoryCode).
+		WithArgs(catReq.CategoryName, catReq.CategoryDesc, catReq.CategoryCode).
 		WillReturnError(sqlmock.ErrCancelled)
 
 	err = dao.UpdateCategory(catReq)
@@ -219,7 +219,6 @@ func TestDeleteCategory_Error(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, "canceling query due to user request", err.Error())
 }
-
 
 func TestDeleteCategory_NotFound(t *testing.T) {
 	db, mock, err := sqlmock.New()

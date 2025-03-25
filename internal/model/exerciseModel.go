@@ -15,6 +15,22 @@ type AuditRecord struct {
 	UpdatedAt time.Time `json:"updatedAt" db:"updated_at"`
 }
 
+type ApparatusFields struct {
+	ApparatusCode  string `json:"apparatusCode" db:"apparatus_code"`
+	ApparatusName  string `json:"apparatusName" db:"apparatus_name"`
+	ApparatusDesc  string `json:"apparatusDesc" db:"apparatus_description"`
+	ApparatusGroup string `json:"apparatusGroup" db:"apparatus_group"`
+}
+
+type ApparatusRequest struct {
+	ApparatusFields
+}
+
+type Apparatus struct {
+	ApparatusFields
+	AuditRecord
+}
+
 type MuscleFields struct {
 	MuscleCode  string `json:"muscleCode" db:"muscle_code"`
 	MuscleName  string `json:"muscleName" db:"muscle_name"`
@@ -47,9 +63,9 @@ type Category struct {
 }
 
 type LicenseFields struct {
-	LicenseShortName string `json:"licenseShortName"`
-	LicenseFullName  string `json:"licenseFullName"`
-	LicenseUrl       string `json:"licenseUrl"`
+	LicenseShortName string `json:"licenseShortName" db:"license_short_name"`
+	LicenseFullName  string `json:"licenseFullName" db:"license_full_name"`
+	LicenseUrl       string `json:"licenseUrl" db:"url"`
 }
 
 type LicenseRequest struct {

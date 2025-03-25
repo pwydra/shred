@@ -74,7 +74,7 @@ func TestSetupRouter(t *testing.T) {
 	}
 
 	for _, route := range routes {
-		assert.True(t, routeExists(router.Engine, route.method, route.path), 
+		assert.True(t, routeExists(router.Engine, route.method, route.path),
 			"Route %s %s should exist", route.method, route.path)
 	}
 }
