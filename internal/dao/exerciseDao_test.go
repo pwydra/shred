@@ -38,7 +38,7 @@ func TestCreateExercise(t *testing.T) {
 		WithArgs(exReq.ExerciseName, exReq.Description, exReq.Instructions, exReq.Cues,
 			exReq.VideoUrl, exReq.CategoryCode, exReq.LicenseShortName, exReq.LicenseAuthor,
 			exReq.CreatedBy).
-		WillReturnRows(sqlmock.NewRows([]string{"exercise_uuid", "created_at", "updated_at"}).AddRow(uuid.New(), time.Now(), time.Now()))
+		WillReturnRows(sqlmock.NewRows([]string{"uuid"}).AddRow(uuid.New()))
 
 	ex, err := dao.Create(exReq)
 	assert.NoError(t, err)

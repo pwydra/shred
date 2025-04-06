@@ -16,17 +16,6 @@ type MuscleDAO struct {
 	db *sqlx.DB
 }
 
-type MuscleDaoInterface interface {
-	CreateMuscle(catReq *model.MuscleRequest) (model.Muscle, error)
-	GetMuscleByCode(code string) (*model.Muscle, error)
-	GetAllMuscles(ctx context.Context) ([]model.Muscle, error)
-	UpdateMuscle(catReq *model.MuscleRequest) error
-	DeleteMuscle(code string) error
-}
-
-// Ensure ExerciseDao implements ExerciseDaoInterface
-var _ MuscleDaoInterface = (*MuscleDAO)(nil)
-
 // NewMuscleDAO creates a new instance of MuscleDAO.
 func NewMuscleDAO(db *sqlx.DB) *MuscleDAO {
 	return &MuscleDAO{db: db}
@@ -34,10 +23,9 @@ func NewMuscleDAO(db *sqlx.DB) *MuscleDAO {
 
 const createMusDML string = `
 	INSERT INTO muscle_type (
-		muscle_code, muscle_name, muscle_description, muscle_group, created_by
+		muscle_code, muscle_name, muscle_description, muscle_group
 	) VALUES (
-		$1, $2, $3, $4, $5
-	) RETURNING created_at, updated_at
+		$1, $2, $3, $4
 	)`
 
 // GetMuscleByCode retrieves a muscle by its Code.
@@ -74,21 +62,15 @@ func (dao *MuscleDAO) GetAllMuscles(ctx context.Context) ([]model.Muscle, error)
 
 // CreateMuscle inserts a new muscle into the database.
 // Returns an error if the insertion fails.
-// Returns created object.
-func (dao *MuscleDAO) CreateMuscle(musReq *model.MuscleRequest) (model.Muscle, error) {
-	musReq.MuscleCode = strings.ToUpper(musReq.MuscleCode)
-	mus := model.Muscle{
-		MuscleFields: musReq.MuscleFields,
-		AuditRecord:  model.AuditRecord{CreatedBy: musReq.CreatedBy},
-	}
-	err := dao.db.QueryRowx(createMusDML,
-		musReq.MuscleCode, musReq.MuscleName, musReq.MuscleDesc,
-		musReq.MuscleGroup, musReq.CreatedBy).Scan(&mus.CreatedAt, &mus.UpdatedAt)
+// Does not return the PK as type tables have PK specified by the request.
+func (dao *MuscleDAO) CreateMuscle(musReq *model.MuscleRequest) error {
+	_, err := dao.db.Exec(createMusDML,
+		strings.ToUpper(musReq.MuscleCode), musReq.MuscleName, musReq.MuscleDesc)
 	if err != nil {
-		return mus, err
+		return err
 	}
 
-	return mus, nil
+	return nil
 }
 
 // UpdateMuscle updates an existing muscle in the database.

@@ -5,10 +5,8 @@ import (
 	"database/sql"
 	"errors"
 	"testing"
-	"time"
 
 	"github.com/DATA-DOG/go-sqlmock"
-	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 	"github.com/pwydra/shred/internal/model"
 	"github.com/stretchr/testify/assert"
@@ -84,23 +82,14 @@ func TestCreateCategory(t *testing.T) {
 			CategoryName: "Strength",
 			CategoryDesc: "Strength training exercises",
 		},
-		CreatedBy: uuid.New(),
 	}
 
-	timeNow := time.Now()
+	mock.ExpectExec("INSERT INTO category_type \\( category_code, category_name, category_description \\) VALUES \\( \\$1, \\$2, \\$3 \\)").
+		WithArgs(catReq.CategoryCode, catReq.CategoryName, catReq.CategoryDesc).
+		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	mock.ExpectQuery("INSERT INTO category_type \\( category_code, category_name, category_description, created_by \\) VALUES \\( \\$1, \\$2, \\$3, \\$4 \\) RETURNING .*").
-		WithArgs(catReq.CategoryCode, catReq.CategoryName, catReq.CategoryDesc, catReq.CreatedBy).
-		WillReturnRows(sqlmock.NewRows([]string{"created_at", "updated_at"}).AddRow(timeNow, timeNow))
-
-	cat, err := dao.CreateCategory(catReq)
+	err = dao.CreateCategory(catReq)
 	assert.NoError(t, err)
-	assert.Equal(t, catReq.CategoryCode, cat.CategoryCode)
-	assert.Equal(t, catReq.CategoryName, cat.CategoryName)
-	assert.Equal(t, catReq.CategoryDesc, cat.CategoryDesc)
-	assert.Equal(t, catReq.CreatedBy, cat.CreatedBy)
-	assert.Equal(t, timeNow, cat.CreatedAt)
-	assert.Equal(t, timeNow, cat.UpdatedAt)
 }
 
 func TestCreateCategory_Error(t *testing.T) {
@@ -116,14 +105,13 @@ func TestCreateCategory_Error(t *testing.T) {
 			CategoryName: "Strength",
 			CategoryDesc: "Strength training exercises",
 		},
-		CreatedBy: uuid.New(),
 	}
 
-	mock.ExpectQuery("INSERT INTO category_type \\( category_code, category_name, category_description, created_by \\) VALUES \\( \\$1, \\$2, \\$3, \\$4 \\)").
-		WithArgs(catReq.CategoryCode, catReq.CategoryName, catReq.CategoryDesc, catReq.CreatedBy).
+	mock.ExpectExec("INSERT INTO category_type \\( category_code, category_name, category_description \\) VALUES \\( \\$1, \\$2, \\$3 \\)").
+		WithArgs(catReq.CategoryCode, catReq.CategoryName, catReq.CategoryDesc).
 		WillReturnError(errors.New("insertion error"))
 
-	_, err = dao.CreateCategory(catReq)
+	err = dao.CreateCategory(catReq)
 	assert.Error(t, err)
 	assert.Equal(t, "insertion error", err.Error())
 }
@@ -141,7 +129,6 @@ func TestUpdateCategory(t *testing.T) {
 			CategoryName: "Strength",
 			CategoryDesc: "Strength training exercises",
 		},
-		CreatedBy: uuid.New(),
 	}
 
 	mock.ExpectExec("UPDATE category_type SET category_name = \\$1, category_description = \\$2 WHERE category_code = \\$3").

@@ -58,24 +58,17 @@ func getConnectionString() string {
 }
 
 func setupRouter(db *sqlx.DB) *Router {
+	exerciseDao := dao.NewExerciseDao(db)
+	handler := handlers.NewHandler(exerciseDao)
 
 	r := NewRouter()
 
-	exerciseDao := dao.NewExerciseDao(db)
-	handler := handlers.NewHandler(exerciseDao)
+	//	r.Engine.GET("/exercises/query", handler.queryExercise)
+	//	r.Engine.GET("/exercises", handler.GetExercises)
 	r.Engine.GET("/exercises/:uuid", handler.GetExercise)
 	r.Engine.POST("/exercises", handler.CreateExercise)
 	r.Engine.PUT("/exercises/:uuid", handler.UpdateExercise)
 	r.Engine.DELETE("/exercises/:uuid", handler.DeleteExercise)
-	//	r.Engine.GET("/exercises/query", handler.queryExercise)
-	//	r.Engine.GET("/exercises", handler.GetExercises)
-
-	catDao := dao.NewCategoryDAO(db)
-	catHandler := handlers.NewCategoryHandler(catDao)
-	r.Engine.GET("/categories/:code", catHandler.GetCategory)
-	r.Engine.POST("/categories", catHandler.CreateCategory)
-	r.Engine.PUT("/categories/:code", catHandler.UpdateCategory)
-	r.Engine.DELETE("/categories/:code", catHandler.DeleteCategory)
 
 	return r
 }

@@ -24,7 +24,6 @@ type ApparatusFields struct {
 
 type ApparatusRequest struct {
 	ApparatusFields
-	CreatedBy uuid.UUID `json:"createdBy" db:"created_by"`
 }
 
 type Apparatus struct {
@@ -41,7 +40,6 @@ type MuscleFields struct {
 
 type MuscleRequest struct {
 	MuscleFields
-	CreatedBy uuid.UUID `json:"createdBy" db:"created_by"`
 }
 
 type Muscle struct {
@@ -57,7 +55,6 @@ type CategoryFields struct {
 
 type CategoryRequest struct {
 	CategoryFields
-	CreatedBy uuid.UUID `json:"createdBy" db:"created_by"`
 }
 
 type Category struct {
@@ -73,7 +70,6 @@ type LicenseFields struct {
 
 type LicenseRequest struct {
 	LicenseFields
-	CreatedBy uuid.UUID `json:"createdBy" db:"created_by"`
 }
 
 type License struct {

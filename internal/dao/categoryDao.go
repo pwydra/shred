@@ -11,16 +11,6 @@ import (
 	"github.com/pwydra/shred/internal/model"
 )
 
-type CategoryDaoInterface interface {
-	CreateCategory(catReq *model.CategoryRequest) (model.Category, error)
-	GetCategoryByCode(code string) (*model.Category, error)
-	UpdateCategory(catReq *model.CategoryRequest) error
-	DeleteCategory(code string) error
-}
-
-// Ensure ExerciseDao implements ExerciseDaoInterface
-var _ CategoryDaoInterface = (*CategoryDAO)(nil)
-
 // CategoryDAO provides access to the categories in the database.
 type CategoryDAO struct {
 	db *sqlx.DB
@@ -33,10 +23,10 @@ func NewCategoryDAO(db *sqlx.DB) *CategoryDAO {
 
 const createCatDML string = `
 	INSERT INTO category_type (
-		category_code, category_name, category_description, created_by
+		category_code, category_name, category_description
 	) VALUES (
-		$1, $2, $3, $4
-	) RETURNING created_at, updated_at`
+		$1, $2, $3
+	)`
 
 // GetCategoryByCode retrieves a category by its Code.
 const getCatByCodeDQL string = `
@@ -73,19 +63,14 @@ func (dao *CategoryDAO) GetAllCategories(ctx context.Context) ([]model.Category,
 // CreateCategory inserts a new category into the database.
 // Returns an error if the insertion fails.
 // Does not return the PK as type tables have PK specified by the request.
-func (dao *CategoryDAO) CreateCategory(catReq *model.CategoryRequest) (model.Category, error) {
-	cat := model.Category{
-		CategoryFields: catReq.CategoryFields,
-		AuditRecord:    model.AuditRecord{CreatedBy: catReq.CreatedBy},
-	}
-	err := dao.db.QueryRowx(createCatDML,
-		strings.ToUpper(catReq.CategoryCode), catReq.CategoryName,
-		catReq.CategoryDesc, catReq.CreatedBy).Scan(&cat.CreatedAt, &cat.UpdatedAt)
+func (dao *CategoryDAO) CreateCategory(catReq *model.CategoryRequest) error {
+	_, err := dao.db.Exec(createCatDML,
+		strings.ToUpper(catReq.CategoryCode), catReq.CategoryName, catReq.CategoryDesc)
 	if err != nil {
-		return cat, err
+		return err
 	}
 
-	return cat, nil
+	return nil
 }
 
 // UpdateCategory updates an existing category in the database.
