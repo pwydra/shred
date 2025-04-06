@@ -17,10 +17,10 @@ type MuscleDAO struct {
 }
 
 type MuscleDaoInterface interface {
-	CreateMuscle(catReq *model.MuscleRequest) (model.Muscle, error)
+	CreateMuscle(musReq *model.MuscleRequest) (model.Muscle, error)
 	GetMuscleByCode(code string) (*model.Muscle, error)
 	GetAllMuscles(ctx context.Context) ([]model.Muscle, error)
-	UpdateMuscle(catReq *model.MuscleRequest) error
+	UpdateMuscle(musReq *model.MuscleRequest) error
 	DeleteMuscle(code string) error
 }
 
