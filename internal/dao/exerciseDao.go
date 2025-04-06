@@ -32,7 +32,7 @@ const createDML string = `
 		exercise_name, exercise_description, instructions, cues, 
 		video_url, category_code, license_short_name, license_author, 
 		created_by
-	) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING uuid`
+	) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING uuid, created_at, updated_at`
 
 const updateDML string = `
 	UPDATE exercise SET 
@@ -64,7 +64,7 @@ func (dao *ExerciseDao) Create(exReq *model.ExerciseRequest) (*model.Exercise, e
 	err := dao.db.QueryRowx(createDML,
 		exReq.ExerciseName, exReq.Description, exReq.Instructions, exReq.Cues,
 		exReq.VideoUrl, exReq.CategoryCode, exReq.LicenseShortName, exReq.LicenseAuthor,
-		exReq.CreatedBy).Scan(&exercise.CreatedBy)
+		exReq.CreatedBy).Scan(&exercise.ExerciseUuid, &exercise.CreatedAt, &exercise.UpdatedAt)
 	if err != nil {
 		log.Println("Error creating exercise:", err)
 		return nil, err
