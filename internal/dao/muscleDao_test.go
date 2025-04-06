@@ -84,7 +84,9 @@ func TestCreateMuscle(t *testing.T) {
 			MuscleCode: "LAT",
 			MuscleName: "Latissimus",
 			MuscleDesc: "Muscle of the back",
+			MuscleGroup: "Back",
 		},
+		CreatedBy: uuid.New(),
 	}
 
 	mock.ExpectQuery("INSERT INTO muscle_type \\( muscle_code, muscle_name, muscle_description, muscle_group, created_by \\) VALUES \\( \\$1, \\$2, \\$3, \\$4, \\$5 \\).*").

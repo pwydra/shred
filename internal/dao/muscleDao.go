@@ -24,7 +24,7 @@ type MuscleDaoInterface interface {
 	DeleteMuscle(code string) error
 }
 
-// Ensure ExerciseDao implements ExerciseDaoInterface
+// Ensure MuscleDAO implements MuscleDaoInterface
 var _ MuscleDaoInterface = (*MuscleDAO)(nil)
 
 // NewMuscleDAO creates a new instance of MuscleDAO.
